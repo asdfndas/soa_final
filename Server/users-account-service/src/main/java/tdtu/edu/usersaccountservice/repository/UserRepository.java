@@ -18,23 +18,23 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @Modifying
-    @Transactional
-    @Query(
-            value = "INSERT INTO public.user (user_name, email, first_name, " +
-                    "last_name, gender, is_teacher, date_of_birth) " +
-                    "VALUES (:userName, :email, :fullName, :dateOfBirth)",
-            nativeQuery = true
-    )
-    void saveUser(
-            @Param("userName") String userName,
-            @Param("email") String email,
-            @Param("first_name") String firstName,
-            @Param("last_name") String lastName,
-            @Param("gender") Gender gender,
-            @Param("is_teacher") boolean isTeacher,
-            @Param("dateOfBirth") Date dateOfBirth
-    );
+//    @Modifying
+//    @Transactional
+//    @Query(
+//            value = "INSERT INTO public.user (user_name, email, first_name, " +
+//                    "last_name, gender, is_teacher, date_of_birth) " +
+//                    "VALUES (:userName, :email, :fullName, :dateOfBirth)",
+//            nativeQuery = true
+//    )
+//    void saveUser(
+//            @Param("userName") String userName,
+//            @Param("email") String email,
+//            @Param("first_name") String firstName,
+//            @Param("last_name") String lastName,
+//            @Param("gender") Gender gender,
+//            @Param("is_teacher") boolean isTeacher,
+//            @Param("dateOfBirth") Date dateOfBirth
+//    );
 
     User save(User user);
 
