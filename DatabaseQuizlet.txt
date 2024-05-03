@@ -1,0 +1,53 @@
+Service 1: Quản lí tài khoản authentication
+Entity: 
+	Account:
+		- email
+		- password
+		- role
+		- limit
+	
+	Users:
+		- id
+		- fullName
+		- dateOfBirth
+		- userName
+
+Service 2: Quản lí thẻ:
+	Cards:
+		- id
+		- name
+		- description
+		- isHighLight
+
+	Image:
+		- id
+		- fileImage
+
+	Audio: 
+		- id
+		- fileAudio
+
+	Format:
+		- textStyle
+		- textColor
+
+
+Service 3: Quản lí học phần:
+	Library:
+		- id
+		- libraryName
+		- description
+	Image:
+		- id
+		- fileImage
+	
+	Access:
+		- id
+		- isPublic
+		- password
+		- isEditForOther
+
+Service 4: Học bài theo học phần:
+	
+
+Service 5: Tại bài kiểm tra
