@@ -28,11 +28,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/images/**").permitAll()
-                        .anyRequest().authenticated()
-                        //.anyRequest().permitAll()
+//                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .oauth2Login(withDefaults())
-
                 // configure logout with Auth0
                 .logout(logout -> logout
                         .addLogoutHandler(logoutHandler()));

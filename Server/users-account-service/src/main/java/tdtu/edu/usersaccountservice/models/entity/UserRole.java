@@ -7,9 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashSet;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +27,12 @@ public class UserRole {
     @Column(name = "created_at")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date createdAt;
+
+    public UserRole(String student, Date currentDate) {
+        this.roleName  = student;
+        this.createdAt = currentDate;
+    }
+
 
 /*  @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),

@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tdtu.edu.usersaccountservice.models.dto.Gender;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -39,7 +38,7 @@ public class User {
     private String lastName;
 
     @Column(name = "gender")
-    private Gender gender;
+    private String gender;
 
     @Column(name = "is_teacher")
     private boolean isTeacher;
@@ -47,6 +46,7 @@ public class User {
     @Column(name = "date_of_birth")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
+
 
     //Relationship schema
     @ManyToMany(fetch = FetchType.LAZY)
@@ -57,7 +57,7 @@ public class User {
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = UserRole.class)
     @JoinColumn(name = "user_role_id", nullable = false)
-    @JsonBackReference(value = "user-customer")
+    @JsonBackReference(value = "user-role")
     private UserRole userRole;
 
 //    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, targetEntity = UserRole.class)

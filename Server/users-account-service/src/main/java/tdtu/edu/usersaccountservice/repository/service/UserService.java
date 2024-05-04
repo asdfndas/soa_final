@@ -2,12 +2,18 @@ package tdtu.edu.usersaccountservice.repository.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tdtu.edu.usersaccountservice.models.dto.UserRequest;
 import tdtu.edu.usersaccountservice.models.dto.UserResponse;
 import tdtu.edu.usersaccountservice.models.entity.User;
+import tdtu.edu.usersaccountservice.models.entity.UserRole;
 import tdtu.edu.usersaccountservice.repository.UserRepository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,22 +22,18 @@ import java.util.Optional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final UserRoleService userRoleService;
 
     public void createUser(UserRequest userRequest) {
-        User user = User.builder()
-                .userName(userRequest.getUserName())
-                .email(userRequest.getEmail())
-                .firstName(userRequest.getFirstName())
-                .lastName(userRequest.getLastName())
-                .gender(userRequest.getGender())
-                .isTeacher(userRequest.isTeacher())
-                .dateOfBirth(userRequest.getDateOfBirth())
-                .build();
+        Instant instant = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant();
+        Date currentDate = Date.from(instant);
+        UserRole createRole = userRoleService.addRoleUser(new UserRole("Student", currentDate));
 
-        //userRepository.saveUser(user.getUserName(), user.getEmail(), user.getFullName(), user.getDateOfBirth());
-        //Test:  User save(User user); repository file
-        userRepository.save(user);
-        log.info("User email: " + user.getEmail());
+        userRepository.saveUser(
+                userRequest.getUserName(), userRequest.getEmail(), userRequest.getFirstName(),
+                userRequest.getLastName(), userRequest.getGender(), userRequest.isTeacher(),
+                userRequest.getDateOfBirth(), createRole.getId()
+        );
     }
 
     public List<UserResponse> getUserByEmail(String email) {

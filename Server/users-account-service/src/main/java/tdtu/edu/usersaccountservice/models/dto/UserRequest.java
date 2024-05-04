@@ -21,7 +21,7 @@ public class UserRequest {
 
     private String lastName;
 
-    private Gender gender;
+    private String gender;
 
     private boolean isTeacher;
 

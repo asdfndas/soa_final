@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tdtu.edu.usersaccountservice.models.entity.User;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -24,7 +23,7 @@ public class UserResponse {
 
     private String lastName;
 
-    private Gender gender;
+    private String gender;
 
     private boolean isTeacher;
 
