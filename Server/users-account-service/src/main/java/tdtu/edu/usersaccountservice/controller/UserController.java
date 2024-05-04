@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_add:user')")
     public ResponseEntity<?> createUser(@RequestBody UserRequest userRequest) {

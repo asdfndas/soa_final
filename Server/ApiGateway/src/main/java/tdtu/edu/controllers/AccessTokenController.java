@@ -25,5 +25,4 @@ public class AccessTokenController {
         token.put("Bearer", jwtToken);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
-
 }
