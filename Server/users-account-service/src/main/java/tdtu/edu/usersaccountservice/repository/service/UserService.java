@@ -24,12 +24,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserRoleService userRoleService;
 
-    public void createUser(UserRequest userRequest) {
+    public Integer createUser(UserRequest userRequest) {
         Instant instant = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant();
         Date currentDate = Date.from(instant);
         UserRole createRole = userRoleService.addRoleUser(new UserRole("Student", currentDate));
 
-        userRepository.saveUser(
+        return userRepository.saveUser(
                 userRequest.getUserName(), userRequest.getEmail(), userRequest.getFirstName(),
                 userRequest.getLastName(), userRequest.getGender(), userRequest.isTeacher(),
                 userRequest.getDateOfBirth(), createRole.getId()
@@ -40,18 +40,17 @@ public class UserService {
         return userRepository.existsByUserId(userId);
     }
 
-    public List<UserResponse> getUserByEmail(String email) {
-        List<User> users = userRepository.getUserByEmail(email);
-        return users.stream().map(this::mapToUserResponse).toList();
+    public List<User> getUserByEmail(String email) {
+        return userRepository.getUserByEmail(email);
     }
 
-    public UserResponse getUserById(int userId) {
+    public User getUserById(int userId) {
         Optional<User> result = userRepository.getUserByUserId(userId);
-        return result.map(UserResponse::parseTo).orElse(null);
+        return result.orElse(null);
     }
 
-    public UserResponse updateUserByEmail(String firstName, String lastName, String userName, String email) {
-        return UserResponse.parseTo(userRepository.updateUserByEmail(firstName, lastName, userName, email));
+    public void updateUserByEmail(String firstName, String lastName, String userName, String email) {
+        userRepository.updateUserByEmail(firstName, lastName, userName, email);
     }
 
     private UserResponse mapToUserResponse(User user) {

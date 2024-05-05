@@ -22,9 +22,7 @@ public class DetailLibraryStudySet {
     @Column(name = "study_id")
     public Integer studyId;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = User.class)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference(value = "user")
-    private Integer userId;
-
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

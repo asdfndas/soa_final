@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tdtu.edu.usersaccountservice.models.dto.UserRequest;
 import tdtu.edu.usersaccountservice.models.dto.UserResponse;
+import tdtu.edu.usersaccountservice.models.entity.User;
 import tdtu.edu.usersaccountservice.repository.service.UserService;
 
 import java.util.HashMap;
@@ -24,20 +25,15 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_add:user')")
     public ResponseEntity<?> createUser(@RequestBody UserRequest userRequest) {
-        UserResponse response = new UserResponse();
-
         userService.createUser(userRequest);
-
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("MyResponseHeader", "MyValue");
-        return new ResponseEntity<>(response, responseHeaders, HttpStatus.CREATED);
-
+        List<User> resp = userService.getUserByEmail(userRequest.getEmail());
+        return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/get-user-by-email/v1")
     @PreAuthorize("hasAuthority('SCOPE_read:user')")
     public ResponseEntity<?> getUserByEmail(String email) {
-        List<UserResponse> users = userService.getUserByEmail(email);
+        List<User> users = userService.getUserByEmail(email);
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -47,12 +43,9 @@ public class UserController {
     @GetMapping(path = "/get-user-by-userId/v1")
     @PreAuthorize("hasAuthority('SCOPE_read:user')")
     public ResponseEntity<?> getUserByUserId(int userId) {
-        UserResponse userResponse = userService.getUserById(userId);
+        User response = userService.getUserById(userId);
 
-        if (userResponse != null) {
-            return new ResponseEntity<>(userResponse, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/get-exist-user/v1")
@@ -70,13 +63,9 @@ public class UserController {
     @PutMapping("/update-user/v1")
     @PreAuthorize("hasAuthority('SCOPE_update:user')")
     public ResponseEntity<?> updateUserByEmailV1(@RequestBody UserRequest request) {
-        UserResponse respObject = userService.updateUserByEmail(request.getFirstName(), request.getLastName(), request.getUserName(), request.getEmail());
-        HttpHeaders responseHeaders = new HttpHeaders();
-
-        if (respObject != null) {
-            responseHeaders.set("MyResponseHeader", "MyValue");
-            return new ResponseEntity<>(respObject, responseHeaders, HttpStatus.ACCEPTED);
-        }
-        return new ResponseEntity<> (responseHeaders, HttpStatus.NOT_FOUND);
+        userService.updateUserByEmail(request.getFirstName(), request.getLastName(), request.getUserName(), request.getEmail());
+//        List<User> resp = userService.getUserByEmail(request.getEmail());
+        return new ResponseEntity<> (HttpStatus.OK);
     }
+
 }

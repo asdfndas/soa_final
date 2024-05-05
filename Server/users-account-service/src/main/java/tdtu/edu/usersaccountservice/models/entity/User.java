@@ -47,14 +47,6 @@ public class User {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
 
-
-    //Relationship schema
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_notification", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "notification_id")
-    )
-    private Set<Notification> listNotification = new HashSet<>();
-
     @OneToOne(fetch = FetchType.LAZY, targetEntity = UserRole.class)
     @JoinColumn(name = "user_role_id", nullable = false)
     @JsonBackReference(value = "user-role")

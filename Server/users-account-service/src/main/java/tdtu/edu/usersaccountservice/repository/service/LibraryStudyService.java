@@ -30,4 +30,5 @@ public class LibraryStudyService {
     public void deleteByStudyIdAndUserId(Integer studyId, Integer userId) {
         detailLibraryStudyRepository.deleteByStudyIdAndUserId(studyId, userId);
     }
+
 }
