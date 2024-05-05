@@ -89,14 +89,41 @@ def create_card(card: schemas.CardCreate, topic_id: int, db: Session = Depends(g
     return crud.create_card(db, card, topic_id)
 
 @app.get("/cards/{card_id}", response_model=schemas.Card)
-def read_card(card_id: str, db: Session = Depends(get_db)):
+def read_card(card_id: int, db: Session = Depends(get_db)):
     card = crud.get_card(db=db, card_id=card_id)
     if card is None:
         raise HTTPException(status_code=404, detail="Card not found")
     return card
 
+@app.put("/setup_rate_card/{card_id}")
+def setup_rate_card(card_id: int, db: Session = Depends(get_db)):
+    updated_card = crud.setup_rate_card(db=db, card_id=card_id)
+
+    if not updated_card:
+        raise HTTPException(status_code=404, detail=f"Card with id {card_id} not found")
+
+    return updated_card
+
+@app.put("/setdown_rate_card/{card_id}")
+def setup_rate_card(card_id: int, db: Session = Depends(get_db)):
+    updated_card = crud.setdown_rate_card(db=db, card_id=card_id)
+
+    if not updated_card:
+        raise HTTPException(status_code=404, detail=f"Card with id {card_id} not found")
+
+    return updated_card
+
+@app.put("/cards/{card_id}/starred", response_model=schemas.Card)
+def set_card_starred(card_id: int, value: bool, db: Session = Depends(get_db)):
+    updated_card = crud.set_starred_card(db=db, card_id=card_id, value=value)
+
+    if not updated_card:
+        raise HTTPException(status_code=404, detail=f"Card with id {card_id} not found")
+
+    return updated_card
+
 @app.put("/cards/{card_id}", response_model=schemas.Card)
-def update_card(card_id: str, card: schemas.Card, db: Session = Depends(get_db)):
+def update_card(card_id: int, card: schemas.Card, db: Session = Depends(get_db)):
     updated_card = crud.update_card(db=db, card_id=card_id, card=card)
     if updated_card is None:
         raise HTTPException(status_code=404, detail="Card not found")
@@ -122,3 +149,12 @@ def generate_quiz_questions(topic_id: int, db: Session = Depends(get_db)):
     # Gọi hàm create_quiz_questions để tạo bộ câu hỏi trắc nghiệm cho chủ đề (topic_id)
     quiz_questions = crud.create_quiz_by_topic(db=db, topic_id=topic_id)
     return quiz_questions
+
+@app.post("/total_tests/", response_model=schemas.TotalTest)
+def create_total_test(total_test_create: schemas.TotalTestCreate, db: Session = Depends(get_db)):
+    return crud.create_total_test(db=db, total_test_create=total_test_create)
+
+@app.post("/create_type_test/")
+async def create_type_test_endpoint(type_test_create: schemas.TypeTestCreate, db: Session = Depends(get_db)):
+    created_type_test = crud.create_type_test(db, type_test_create)
+    return created_type_test

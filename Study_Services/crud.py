@@ -77,13 +77,40 @@ def create_card(db: Session, card: schemas.CardCreate, topic_id: int):
     db.refresh(db_card)
     return db_card
 
-def get_card(db: Session, card_id: str):
+def get_card(db: Session, card_id: int):
     card = db.query(models.Card).filter(models.Card.id == card_id).first() 
     if not card:
          raise HTTPException(status_code=404, detail="Card not found")
     return card
 
-def update_card(db: Session, card_id: str, card: schemas.Card):
+def set_starred_card(db: Session, card_id: str, value: bool):
+    card = db.query(models.Card).filter(models.Card.id == card_id).first() 
+    if not card:
+         raise HTTPException(status_code=404, detail="Card not found")
+    card.is_starred = value
+    db.commit()
+    db.refresh(card)
+    return card
+
+def setup_rate_card(db: Session, card_id: int):
+    card = db.query(models.Card).filter(models.Card.id == card_id).first()
+    if not card:
+        raise HTTPException(status_code=404, detail="Card not found")
+    card.rate = min(card.rate + 1, 5)
+    db.commit()
+    db.refresh(card)
+    return card
+
+def setdown_rate_card(db: Session, card_id: int):
+    card = db.query(models.Card).filter(models.Card.id == card_id).first()
+    if not card:
+        raise HTTPException(status_code=404, detail="Card not found")
+    card.rate = max(card.rate - 1, 1)
+    db.commit()
+    db.refresh(card)
+    return card
+
+def update_card(db: Session, card_id: int, card: schemas.Card):
     db_card = db.query(models.Card).filter(models.Card.id == card_id).first()
     if db_card:
         db_card.term = card.term
@@ -94,12 +121,12 @@ def update_card(db: Session, card_id: str, card: schemas.Card):
         db.refresh(db_card)
     return db_card
 
-def delete_card(db: Session, card_id: str):
+def delete_card(db: Session, card_id: int):
     db_card = db.query(models.Card).filter(models.Card.id == card_id).first()
     if db_card:
         db.delete(db_card)
         db.commit()
-        return True
+        return db_card
     return False
 
 def upload_image(db: Session, card_id: int, file: UploadFile) -> models.CardImage:
@@ -138,6 +165,7 @@ def create_quiz_by_topic(db: Session, topic_id: int):
                 wrong_answers.append(schemas.Choice(value=random_card.meaning))
 
         question = schemas.Question(
+            card_id = card.id,
             question_text = card.term,
             correct_answer = schemas.Choice(value=card.meaning),
             incorrect_answers=wrong_answers
@@ -145,3 +173,29 @@ def create_quiz_by_topic(db: Session, topic_id: int):
         quiz_questions.append(question)
 
     return quiz_questions
+
+def create_total_test(db: Session, total_test_create: schemas.TotalTestCreate):
+    datetime = total_test_create.datetime
+    point = total_test_create.point
+    user_id = total_test_create.user_id
+    type_id = total_test_create.type_id
+    
+    new_total_test = models.TotalTest(
+        datetime=datetime,
+        point=point,
+        user_id=user_id,
+        type_id=type_id
+    )
+    
+    db.add(new_total_test)
+    db.commit()
+    db.refresh(new_total_test)
+    return new_total_test
+
+
+def create_type_test(db: Session, type_test_create: schemas.TypeTestCreate):
+    db_type_test = models.TypeOfTest(name=type_test_create.name, description=type_test_create.description, topic_id=type_test_create.topic_id)
+    db.add(db_type_test)
+    db.commit()
+    db.refresh(db_type_test)
+    return db_type_test
