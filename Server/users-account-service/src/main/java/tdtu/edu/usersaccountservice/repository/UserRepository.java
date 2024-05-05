@@ -40,6 +40,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> getUserByUserId(int userId);
 
+    boolean existsByUserId(Integer userId);
+
     @Modifying
     @Transactional
     @Query("update User u set u.firstName = ?1, u.lastName = ?2, u.userName=?3 where u.email = ?4")

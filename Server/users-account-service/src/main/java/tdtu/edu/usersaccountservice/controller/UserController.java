@@ -11,7 +11,9 @@ import tdtu.edu.usersaccountservice.models.dto.UserRequest;
 import tdtu.edu.usersaccountservice.models.dto.UserResponse;
 import tdtu.edu.usersaccountservice.repository.service.UserService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -32,8 +34,8 @@ public class UserController {
 
     }
 
-    @GetMapping(path = "/get-user--by-email/v1")
-    @PreAuthorize("hasAuthority('SCOPE_readuser')")
+    @GetMapping(path = "/get-user-by-email/v1")
+    @PreAuthorize("hasAuthority('SCOPE_read:user')")
     public ResponseEntity<?> getUserByEmail(String email) {
         List<UserResponse> users = userService.getUserByEmail(email);
         if (users.isEmpty()) {
@@ -42,8 +44,8 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/get-user--by-userId/v1")
-    @PreAuthorize("hasAuthority('SCOPE_readuser')")
+    @GetMapping(path = "/get-user-by-userId/v1")
+    @PreAuthorize("hasAuthority('SCOPE_read:user')")
     public ResponseEntity<?> getUserByUserId(int userId) {
         UserResponse userResponse = userService.getUserById(userId);
 
@@ -51,6 +53,18 @@ public class UserController {
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path = "/get-exist-user/v1")
+    @PreAuthorize("hasAuthority('SCOPE_read:user')")
+    public ResponseEntity<?> checkExistUser(Integer userId) {
+        Map<String, Boolean> result = new HashMap<>();
+        if (userService.existUser(userId)) {
+            result.put("isExist", true);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        result.put("isExist", false);
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/update-user/v1")

@@ -60,7 +60,12 @@ public class User {
     @JsonBackReference(value = "user-role")
     private UserRole userRole;
 
-//    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, targetEntity = UserRole.class)
-//    @JsonBackReference(value = "booking-customer")
-//    private List<Booking> bookings;
+    @OneToMany
+    @JoinColumn(name = "notification_id") // we need to duplicate the physical information
+    private Set<Notification> notifications;
+
+    @OneToMany
+    @JoinColumn(name = "id") // we need to duplicate the physical information
+    private Set<DetailNotificationUser> detailNotificationUsers;
+
 }

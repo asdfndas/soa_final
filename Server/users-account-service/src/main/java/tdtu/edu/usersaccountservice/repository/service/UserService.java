@@ -36,6 +36,10 @@ public class UserService {
         );
     }
 
+    public boolean existUser(Integer userId) {
+        return userRepository.existsByUserId(userId);
+    }
+
     public List<UserResponse> getUserByEmail(String email) {
         List<User> users = userRepository.getUserByEmail(email);
         return users.stream().map(this::mapToUserResponse).toList();
