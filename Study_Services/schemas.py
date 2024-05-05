@@ -81,11 +81,12 @@ class CardImageResponse(BaseModel):
 class TypeTestBase(BaseModel):
     name: str
     description: str
+    topic_id: int
 
-class TypeTestCreate(UserBase):
+class TypeTestCreate(TypeTestBase):
     pass
 
-class TypeTest(UserBase):
+class TypeTest(TypeTestBase):
     id: int
 
     class Config:
@@ -105,7 +106,7 @@ class TotalTestCreate(TotalTestBase):
 class TotalTest(TotalTestBase):
     id: int
     user: User
-    type_of_test_id: int
+    type_id: int
 
     class Config:
         orm_mode = True 
@@ -115,6 +116,7 @@ class Choice(BaseModel):
     value: str
 
 class Question(BaseModel):
+    card_id: int
     question_text: str
     correct_answer: Choice
     incorrect_answers: List[Choice]

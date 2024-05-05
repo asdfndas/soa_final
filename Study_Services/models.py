@@ -50,6 +50,7 @@ class TypeOfTest(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
+    description = Column(String)
     topic_id = Column(Integer, ForeignKey('topics.id'))
 
     topic = relationship('Topic')
@@ -72,6 +73,9 @@ class Question(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     question_text = Column(String, nullable=False)
+    card_id = Column(Integer, ForeignKey('cards.id'))
+
+    card = relationship('Card')
 
     choices = relationship('Choice', back_populates='question')
 
