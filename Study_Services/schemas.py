@@ -109,3 +109,12 @@ class TotalTest(TotalTestBase):
 
     class Config:
         orm_mode = True 
+
+
+class Choice(BaseModel):
+    value: str
+
+class Question(BaseModel):
+    question_text: str
+    correct_answer: Choice
+    incorrect_answers: List[Choice]

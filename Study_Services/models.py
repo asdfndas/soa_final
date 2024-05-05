@@ -1,6 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Float, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
+from typing import List
 
 class User(Base):
     __tablename__ = 'users'
@@ -34,7 +35,6 @@ class Card(Base):
     topic_id = Column(Integer, ForeignKey('topics.id'))
 
     topic = relationship('Topic', back_populates='cards')
-    images = relationship('CardImage', back_populates='card')
 
 class CardImage(Base):
     __tablename__ = 'card_images'
@@ -43,7 +43,7 @@ class CardImage(Base):
     url = Column(String)
     card_id = Column(Integer, ForeignKey('cards.id'))
 
-    card = relationship('Card', back_populates='images')
+    card = relationship('Card')
 
 class TypeOfTest(Base):
     __tablename__ = 'type_of_test'
@@ -65,3 +65,22 @@ class TotalTest(Base):
 
     user = relationship('User')
     type_of_test = relationship('TypeOfTest')
+
+
+class Question(Base):
+    __tablename__ = 'questions'
+
+    id = Column(Integer, primary_key=True, index=True)
+    question_text = Column(String, nullable=False)
+
+    choices = relationship('Choice', back_populates='question')
+
+class Choice(Base):
+    __tablename__ = 'choices'
+
+    id = Column(Integer, primary_key=True, index=True)
+    choice_text = Column(String, nullable=False)
+    is_correct = Column(Boolean, default=False)
+
+    question_id = Column(Integer, ForeignKey('questions.id'))
+    question = relationship('Question', back_populates='choices')

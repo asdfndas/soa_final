@@ -103,12 +103,10 @@ def delete_card(db: Session, card_id: str):
     return False
 
 def upload_image(db: Session, card_id: int, file: UploadFile) -> models.CardImage:
-    # Tìm card theo card_id
     card = db.query(models.Card).filter(models.Card.id == card_id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Card not found")
 
-    # Tạo public_id cho ảnh (sử dụng card_id và một chuỗi ngẫu nhiên)
     random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
     public_id = f"card-{card_id}-{random_string}"
 
@@ -122,22 +120,28 @@ def upload_image(db: Session, card_id: int, file: UploadFile) -> models.CardImag
         return new_image
 
     except Exception as e:
-        # Xử lý ngoại lệ khi có lỗi xảy ra trong quá trình tải lên
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
 
 
-def create_random_quiz(db: Session, topic_id: int):
+def create_quiz_by_topic(db: Session, topic_id: int):
     cards = db.query(models.Card).filter(models.Card.topic_id == topic_id).all()
-    
 
-    question_card = sample(cards, 1)[0]
-    question = question_card.term
+    quiz_questions = []
 
-    other_cards = [card for card in cards if card != question_card]
-    if len(cards) > 3:
-        choices = sample(other_cards, 3)
-    answer_choices = [question_card.meaning] + [choice.meaning for choice in choices]
+    for card in cards:
+        num_wrong_answers = min(len(cards) - 1, 3) 
+        wrong_answers = []
 
-    answer_choices = sample(answer_choices, len(answer_choices))
+        while len(wrong_answers) < num_wrong_answers:
+            random_card = random.choice(cards)
+            if random_card.meaning != card.meaning and random_card.meaning not in [choice.value for choice in wrong_answers]:
+                wrong_answers.append(schemas.Choice(value=random_card.meaning))
 
-    return schemas.Quiz(question=question, choices=answer_choices)
+        question = schemas.Question(
+            question_text = card.term,
+            correct_answer = schemas.Choice(value=card.meaning),
+            incorrect_answers=wrong_answers
+        )
+        quiz_questions.append(question)
+
+    return quiz_questions

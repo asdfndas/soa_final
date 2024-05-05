@@ -113,3 +113,12 @@ def delete_card(card_id: str, db: Session = Depends(get_db)):
 async def upload_image(card_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
     return crud.upload_image(db=db, card_id=card_id, file=file)
 
+@app.get("/quiz/{topic_id}", response_model=list[schemas.Question])
+def generate_quiz_questions(topic_id: int, db: Session = Depends(get_db)):
+    topic = db.query(models.Topic).filter(models.Topic.id == topic_id).first()
+    if not topic:
+        raise HTTPException(status_code=404, detail="Topic not found")
+
+    # Gọi hàm create_quiz_questions để tạo bộ câu hỏi trắc nghiệm cho chủ đề (topic_id)
+    quiz_questions = crud.create_quiz_by_topic(db=db, topic_id=topic_id)
+    return quiz_questions
