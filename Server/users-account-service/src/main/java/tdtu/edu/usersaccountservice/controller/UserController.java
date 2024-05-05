@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_add:user')")
     public ResponseEntity<?> createUser(@RequestBody UserRequest userRequest) {
