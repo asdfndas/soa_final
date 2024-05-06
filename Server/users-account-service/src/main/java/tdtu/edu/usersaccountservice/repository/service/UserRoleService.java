@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import tdtu.edu.usersaccountservice.models.entity.UserRole;
 import tdtu.edu.usersaccountservice.repository.UserRoleRepository;
 
+import java.util.Date;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -16,4 +19,13 @@ public class UserRoleService {
         return userRoleRepository.save(userRole);
     }
 
+    public UserRole getUserRoleByEmail(String email) {
+        Optional<UserRole> result = userRoleRepository.getUserRoleByEmail(email);
+        return result.orElse(null);
+    }
+
+    public void updateUserRole(Date limitTime, String roleName, Integer id) {
+        userRoleRepository.updateUserRoleById(limitTime, roleName, id);
+//        return userRoleRepository.getById(id);
+    }
 }

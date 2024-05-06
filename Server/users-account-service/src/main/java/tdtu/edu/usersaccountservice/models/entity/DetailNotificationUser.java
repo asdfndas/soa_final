@@ -19,10 +19,10 @@ public class DetailNotificationUser {
     public Integer Id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "notification_id", insertable = false, updatable = false)
+    @JoinColumn(name = "notification_id")
     private Notification notification;
 }
