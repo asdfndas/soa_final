@@ -25,6 +25,9 @@ class TopicBase(BaseModel):
 class TopicCreate(TopicBase):
     pass
 
+class TopicUpdate(TopicBase):
+    pass
+
 class Topic(TopicBase):
     id: int
     user_id: int
@@ -40,6 +43,9 @@ class CardBase(BaseModel):
     meaning: str
 
 class CardCreate(CardBase):
+    pass
+
+class CardUpdate(CardBase):
     pass
 
 class Card(CardBase):

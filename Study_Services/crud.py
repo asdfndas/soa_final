@@ -44,7 +44,7 @@ def get_topic(db: Session, topic_id: int) -> models.Topic:
 def get_topic_by_user(db: Session, user_id: int):
     return db.query(models.Topic).filter(models.Topic.user_id == user_id).all()
 
-def update_topic(db: Session, topic_id: int, topic: schemas.Topic):
+def update_topic(db: Session, topic_id: int, topic: schemas.TopicUpdate):
     db_topic = db.query(models.Topic).filter(models.Topic.id == topic_id).first()
     if db_topic:
         db_topic.name = topic.name
@@ -55,10 +55,24 @@ def update_topic(db: Session, topic_id: int, topic: schemas.Topic):
 
 def delete_topic(db: Session, topic_id: int):
     db_topic = db.query(models.Topic).filter(models.Topic.id == topic_id).first()
+    
     if db_topic:
-        db.delete(db_topic)
-        db.commit()
-        return db_topic
+        db_cards = db.query(models.Card).filter(models.Card.topic_id == topic_id).all()
+        for card in db_cards:
+            card_id = card.id
+            db_images = db.query(models.CardImage).filter(models.CardImage.card_id == card_id).all()
+            for img in db_images:
+                db.delete(img)
+            db.delete(card)
+
+    db.delete(db_topic)
+    db.commit()
+    
+    return db_topic
+        # except Exception as e:
+        #     db.rollback()
+        #     raise e
+    
     return False
 
 def create_card(db: Session, card: schemas.CardCreate, topic_id: int):
@@ -110,13 +124,11 @@ def setdown_rate_card(db: Session, card_id: int):
     db.refresh(card)
     return card
 
-def update_card(db: Session, card_id: int, card: schemas.Card):
+def update_card(db: Session, card_id: int, card: schemas.CardUpdate):
     db_card = db.query(models.Card).filter(models.Card.id == card_id).first()
     if db_card:
         db_card.term = card.term
         db_card.meaning = card.meaning
-        db_card.is_starred = card.is_starred
-        db_card.rate = card.rate
         db.commit()
         db.refresh(db_card)
     return db_card

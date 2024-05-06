@@ -71,7 +71,7 @@ def read_topic(user_id: int, db: Session = Depends(get_db)):
     return topics
 
 @app.put("/topics/{topic_id}", response_model=schemas.Topic)
-def update_topic(topic_id: int, topic: schemas.Topic, db: Session = Depends(get_db)):
+def update_topic(topic_id: int, topic: schemas.TopicUpdate, db: Session = Depends(get_db)):
     updated_topic = crud.update_topic(db, topic_id=topic_id, topic=topic)
     if updated_topic is None:
         raise HTTPException(status_code=404, detail="Topic not found")
@@ -123,7 +123,7 @@ def set_card_starred(card_id: int, value: bool, db: Session = Depends(get_db)):
     return updated_card
 
 @app.put("/cards/{card_id}", response_model=schemas.Card)
-def update_card(card_id: int, card: schemas.Card, db: Session = Depends(get_db)):
+def update_card(card_id: int, card: schemas.CardUpdate, db: Session = Depends(get_db)):
     updated_card = crud.update_card(db=db, card_id=card_id, card=card)
     if updated_card is None:
         raise HTTPException(status_code=404, detail="Card not found")
@@ -131,10 +131,10 @@ def update_card(card_id: int, card: schemas.Card, db: Session = Depends(get_db))
 
 @app.delete("/cards/{card_id}")
 def delete_card(card_id: str, db: Session = Depends(get_db)):
-    if not crud.delete_card(db=db, card_id=card_id):
+    card = crud.delete_card(db=db, card_id=card_id)
+    if not card:
         raise HTTPException(status_code=404, detail="Card not found")
-    return {"message": "Card deleted successfully"}
-
+    return card
 
 @app.post("/upload", response_model=schemas.CardImageResponse)
 async def upload_image(card_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
@@ -146,7 +146,6 @@ def generate_quiz_questions(topic_id: int, db: Session = Depends(get_db)):
     if not topic:
         raise HTTPException(status_code=404, detail="Topic not found")
 
-    # Gọi hàm create_quiz_questions để tạo bộ câu hỏi trắc nghiệm cho chủ đề (topic_id)
     quiz_questions = crud.create_quiz_by_topic(db=db, topic_id=topic_id)
     return quiz_questions
 
@@ -155,6 +154,6 @@ def create_total_test(total_test_create: schemas.TotalTestCreate, db: Session = 
     return crud.create_total_test(db=db, total_test_create=total_test_create)
 
 @app.post("/create_type_test/")
-async def create_type_test_endpoint(type_test_create: schemas.TypeTestCreate, db: Session = Depends(get_db)):
+async def create_type_test(type_test_create: schemas.TypeTestCreate, db: Session = Depends(get_db)):
     created_type_test = crud.create_type_test(db, type_test_create)
     return created_type_test
